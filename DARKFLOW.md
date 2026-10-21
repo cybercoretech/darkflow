@@ -4,7 +4,9 @@ This file is the human-readable workflow guide for this repository. The structur
 
 ## 🧭 Change lifecycle
 
-The prototype currently supports project inspection, config parsing, request preparation, review, local request saving, and in-session telemetry. It does not yet run an agent or project checks, create worktrees, produce diffs, or apply source patches.
+The prototype currently supports project inspection, config parsing, request preparation/review/save, session-local telemetry, and creation/listing/discard of detached Git worktrees at captured `HEAD` commits. Dirty source trees are blocked by default; a project may explicitly configure `workflow.require_clean_worktree = false`, in which case the new worktree still starts from committed `HEAD` and does not include uncommitted changes.
+
+It does not yet run an agent or project checks, produce diffs, enforce changed-path scope, detect stale proposals, or apply source patches.
 
 The intended lifecycle, once the engine is implemented, is:
 

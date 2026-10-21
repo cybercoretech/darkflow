@@ -5,7 +5,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             commands::inspect_project,
-            commands::save_request_packet
+            commands::save_request_packet,
+            commands::create_proposal_workspace,
+            commands::discard_proposal_workspace,
+            commands::list_proposal_workspaces
         ])
         .run(tauri::generate_context!())
         .expect("Darkflow desktop runtime failed");

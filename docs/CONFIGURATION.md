@@ -29,7 +29,7 @@ timeout_seconds = 900
 required = true
 ```
 
-The prototype parses project name, workflow mode, and check summaries. It does not currently enforce the scope or execute configured commands. In the planned workflow, commands will be displayed and executed only in the isolated proposal worktree. A later schema should represent executables and argument arrays separately to avoid shell parsing. Arbitrary shell text must never be interpolated with task input.
+The prototype parses project name, workflow mode, `require_clean_worktree`, and check summaries. Worktree creation honors `require_clean_worktree` (default `true`); when a project explicitly disables it, the detached proposal still starts from committed `HEAD` and excludes uncommitted source changes. Darkflow does not currently enforce path scope or execute configured commands. In the planned workflow, commands will be displayed and executed only in the isolated proposal worktree. A later schema should represent executables and argument arrays separately to avoid shell parsing. Arbitrary shell text must never be interpolated with task input.
 
 ## Migration rules
 

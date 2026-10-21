@@ -21,8 +21,8 @@ The goal is a programmable local control panel: configure each repository, descr
 
 ## Workflow engine — required before real code edits
 
-- [ ] Capture original worktree status and immutable base commit.
-- [ ] Create disposable isolated Git worktrees per proposal; clean them on discard.
+- [x] Capture original worktree status and immutable base commit.
+- [x] Create, list, and explicitly discard disposable isolated Git worktrees per proposal.
 - [ ] Integrate Codex CLI through a provider adapter with network disabled by default.
 - [ ] Validate allowed, excluded, and protected paths before and after generation.
 - [ ] Display exact commands, environment, cwd, timeout, and network policy before running checks.
@@ -31,6 +31,7 @@ The goal is a programmable local control panel: configure each repository, descr
 - [ ] Detect a stale original worktree and require a fresh review.
 - [ ] Apply only the reviewed diff with atomic backups and a recoverable result.
 - [ ] Ensure apply does not commit, push, or deploy.
+- [x] Add tests for dirty-tree policy, repository-root checks, detached worktree creation, and cleanup.
 - [ ] Add integration tests for malicious paths, stale baseline, failed checks, and patch boundaries.
 
 ## Control panel and telemetry

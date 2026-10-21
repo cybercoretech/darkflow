@@ -5,5 +5,6 @@
 - Establish the Tauri + Rust + React foundation and Darkflow visual system.
 - Add project inspection and TOML parsing for `darkflow.conf`.
 - Add review-then-save local request packets and session-local telemetry.
-- Document that worktree execution, checks, diff review, and patch application are planned engine work, not implemented behavior.
+- Add detached proposal worktree creation, baseline capture, dirty-tree policy, persistent worktree listing, and explicit discard.
+- Keep agent execution, configured checks, diff review, path enforcement, stale-baseline detection, and patch application documented as unfinished engine work.
 - Add the ten-direction brand board and record the provisional app icon status.

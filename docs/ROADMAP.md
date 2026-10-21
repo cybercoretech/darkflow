@@ -12,7 +12,7 @@
 
 ## Phase 2 — Safe proposal workflow
 
-- [ ] Create a detached proposal worktree and capture base commit/status.
+- [x] Create a detached proposal worktree and capture base commit/status; block dirty trees by default.
 - [ ] Run Codex CLI behind a provider interface in that worktree.
 - [ ] Execute configured checks with timeout, cancellation, and visible output.
 - [ ] Render unified diff, file tree, risk labels, and telemetry before apply.

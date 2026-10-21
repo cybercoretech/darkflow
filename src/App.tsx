@@ -18,6 +18,7 @@ type ProjectSnapshot = {
 };
 type NavKey = "overview" | "proposals" | "telemetry" | "project";
 type Packet = { id: string; projectRoot: string; task: string; criteria: string; paths: string; provider: string; network: boolean; createdAt: string; saved?: boolean };
+type ProposalWorkspace = { id: string; projectRoot: string; worktreePath: string; baseCommit: string; baseBranch: string | null; originalChangedFiles: number; createdAtMs: number };
 type SessionEvent = { time: string; timestamp: number; kind: string; tone: string; message: string; tag: string };
 
 const demoProject: ProjectSnapshot = {
@@ -48,6 +49,8 @@ function App() {
   const [provider, setProvider] = useState("Codex CLI");
   const [network, setNetwork] = useState(false);
   const [packet, setPacket] = useState<Packet | null>(null);
+  const [proposalWorkspaces, setProposalWorkspaces] = useState<ProposalWorkspace[]>([]);
+  const [workspaceBusy, setWorkspaceBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [desktop, setDesktop] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
@@ -70,6 +73,13 @@ function App() {
     window.addEventListener("keydown", shortcut);
     return () => window.removeEventListener("keydown", shortcut);
   }, [task, criteria, paths]);
+
+  useEffect(() => {
+    if (!("__TAURI_INTERNALS__" in window)) return;
+    void invoke<ProposalWorkspace[]>("list_proposal_workspaces")
+      .then(setProposalWorkspaces)
+      .catch((error) => setNotice(`Could not load proposal worktrees: ${String(error)}`));
+  }, []);
 
   const current = project || (desktop ? emptyProject : demoProject);
   const chartHeights = useMemo(() => {
@@ -135,6 +145,33 @@ function App() {
     } catch (error) { setNotice(`Could not save request: ${String(error)}`); recordEvent("REQUEST", "amber", "Local request save failed", "ERROR"); }
   }
 
+  async function createWorkspace() {
+    if (!packet || !packet.saved || !desktop) return;
+    setWorkspaceBusy(true);
+    try {
+      const workspace = await invoke<ProposalWorkspace>("create_proposal_workspace", { projectRoot: packet.projectRoot, requestId: packet.id });
+      setProposalWorkspaces((items) => [...items.filter((item) => item.id !== workspace.id), workspace]);
+      setNotice(`Isolated baseline created at ${workspace.baseCommit.slice(0, 12)}. No agent or project checks were run.`);
+      recordEvent("WORKTREE", "green", "Detached proposal worktree created at captured HEAD", "READY");
+    } catch (error) {
+      setNotice(String(error));
+      recordEvent("WORKTREE", "amber", "Proposal worktree preparation failed", "BLOCKED");
+    } finally { setWorkspaceBusy(false); }
+  }
+
+  async function discardWorkspace(workspace: ProposalWorkspace) {
+    if (!window.confirm(`Discard the isolated proposal worktree for ${workspace.id.slice(0, 8)}? Any files created inside that disposable worktree will be removed.`)) return;
+    try {
+      await invoke("discard_proposal_workspace", { proposalId: workspace.id });
+      setProposalWorkspaces((items) => items.filter((item) => item.id !== workspace.id));
+      setNotice("Proposal worktree and its local manifest were removed. The source project was unchanged.");
+      recordEvent("WORKTREE", "cyan", "Isolated proposal worktree discarded", "CLEANED");
+    } catch (error) {
+      setNotice(String(error));
+      recordEvent("WORKTREE", "amber", "Proposal worktree cleanup failed", "ERROR");
+    }
+  }
+
   const activeNav = navItems.find((item) => item.key === page)!;
   return <div className="app-shell">
     <aside className="sidebar">
@@ -172,8 +209,8 @@ function App() {
               <label className="field-label" htmlFor="criteria">ACCEPTANCE CRITERIA <span>OPTIONAL · ONE PER LINE</span></label>
               <textarea id="criteria" className="criteria-input" rows={2} placeholder="What must be true when this work is done?" value={criteria} onChange={(event) => setCriteria(event.target.value)} />
               <div className="field-row"><div className="field-grow"><label className="field-label" htmlFor="scope">ALLOWED PATH SCOPE</label><input id="scope" value={paths} onChange={(event) => setPaths(event.target.value)} /></div><div className="field-fixed"><label className="field-label" htmlFor="provider">CHANGE PROVIDER</label><select id="provider" value={provider} onChange={(event) => setProvider(event.target.value)}><option>Codex CLI</option><option>Manual patch</option><option>Provider adapter</option></select></div></div>
-              <div className="guard-row"><div className="guard-copy"><span className="guard-icon"><ShieldCheck size={16} /></span><div><strong>Isolated worktree mode</strong><small>Agent edits stay out of your active project until review.</small></div></div><label className="switch-wrap"><input type="checkbox" checked readOnly aria-label="Isolated worktree enabled" /><span className="switch" /></label></div>
-              <div className="guard-row network-row"><div className="guard-copy"><span className="guard-icon muted"><Radio size={16} /></span><div><strong>Allow network for this run</strong><small>Off by default · enable only when the task needs it.</small></div></div><Checkbox.Root checked={network} onCheckedChange={(checked) => setNetwork(checked === true)} className="radix-switch" aria-label="Allow network"><Checkbox.Indicator><Check size={11} /></Checkbox.Indicator></Checkbox.Root></div>
+              <div className="guard-row"><div className="guard-copy"><span className="guard-icon"><ShieldCheck size={16} /></span><div><strong>Isolated baseline mode</strong><small>Create a detached worktree without changing the original project.</small></div></div><label className="switch-wrap"><input type="checkbox" checked readOnly aria-label="Isolated worktree enabled" /><span className="switch" /></label></div>
+              <div className="guard-row network-row"><div className="guard-copy"><span className="guard-icon muted"><Radio size={16} /></span><div><strong>Request network access</strong><small>Preference only · no agent runner exists, so this is not enforced yet.</small></div></div><Checkbox.Root checked={network} onCheckedChange={(checked) => setNetwork(checked === true)} className="radix-switch" aria-label="Request network access"><Checkbox.Indicator><Check size={11} /></Checkbox.Indicator></Checkbox.Root></div>
               <div className="form-foot"><span><LockKeyhole size={13} /> No auto-apply · no commit · no push</span><button className="primary-button" onClick={createPacket}><Sparkles size={15} /> PREPARE REVIEW PACKET <span>⌘ ↵</span></button></div>
             </div>
           </section>
@@ -193,7 +230,10 @@ function App() {
           <section className="panel integrity-panel"><div className="panel-head compact"><div className="panel-title"><span className="panel-icon amber"><LockKeyhole size={16} /></span><div><h2>REVIEW INTEGRITY</h2><small>CHANGE SAFETY ENFORCEMENT</small></div></div><span className="integrity-score">100<span>%</span></span></div><div className="integrity-meter"><i /></div><div className="integrity-items"><div><Check size={13} /><span>Diff required before apply</span></div><div><Check size={13} /><span>Stale baseline blocks apply</span></div><div><Check size={13} /><span>Project telemetry stays local</span></div></div><div className="integrity-foot"><ShieldCheck size={14} /> SAFETY PROFILE ACTIVE</div></section>
         </div>
 
-        {page === "proposals" && <section className="panel proposal-detail"><div className="panel-head"><div className="panel-title"><span className="panel-icon amber"><History size={16} /></span><div><h2>PROPOSAL QUEUE</h2><small>REQUEST PACKETS · PATCHES · REVIEW EVIDENCE</small></div></div><span className="status-pending">{packet ? packet.saved ? "1 SAVED" : "1 REVIEW" : "NO PROPOSALS"}</span></div>{packet ? <div className="packet-card"><div className="packet-top"><span className="packet-id">DF-{packet.id.slice(0, 8).toUpperCase()}</span><span>CREATED {new Date(packet.createdAt).toLocaleString()}</span><span className={`status-pending ${packet.saved ? "saved" : ""}`}>{packet.saved ? "SAVED LOCAL" : "READY TO SAVE"}</span></div><h3>{packet.task}</h3><div className="packet-details"><div><small>ACCEPTANCE CRITERIA</small><p>{packet.criteria || "No criteria entered"}</p></div><div><small>ALLOWED SCOPE</small><code>{packet.paths}</code></div><div><small>PROVIDER</small><p>{packet.provider} · {packet.network ? "network enabled" : "network disabled"}</p></div></div><div className="engine-notice"><TerminalSquare size={17} /><div><strong>REQUEST RECORD ONLY · NO CODE GENERATED</strong><p>Review this request, then save it to Darkflow’s private local app data. The project tree is unchanged. Isolated worktree generation, configured checks, diff review, and explicit patch apply are the next workflow-engine milestones.</p></div></div><div className="packet-actions"><button className="secondary-button" onClick={() => setPage("overview")}>EDIT REQUEST</button><button className="primary-button" onClick={() => void savePacket()} disabled={packet.saved}>{packet.saved ? <Check size={14} /> : <LockKeyhole size={14} />}{packet.saved ? "SAVED TO LOCAL HISTORY" : "SAVE REVIEWED REQUEST"}</button></div></div> : <div className="empty-state"><Workflow size={25} /><strong>Nothing in the queue yet</strong><p>Create a request packet from the command deck to begin.</p><button className="secondary-button" onClick={() => setPage("overview")}>OPEN COMMAND DECK</button></div>}</section>}
+        {page === "proposals" && <>
+          <section className="panel proposal-detail"><div className="panel-head"><div className="panel-title"><span className="panel-icon amber"><History size={16} /></span><div><h2>PROPOSAL QUEUE</h2><small>REQUEST PACKETS · ISOLATED BASELINES · REVIEW EVIDENCE</small></div></div><span className="status-pending">{packet ? packet.saved ? "1 SAVED" : "1 REVIEW" : proposalWorkspaces.length ? `${proposalWorkspaces.length} WORKTREES` : "NO PROPOSALS"}</span></div>{packet ? <div className="packet-card"><div className="packet-top"><span className="packet-id">DF-{packet.id.slice(0, 8).toUpperCase()}</span><span>CREATED {new Date(packet.createdAt).toLocaleString()}</span><span className={`status-pending ${packet.saved ? "saved" : ""}`}>{packet.saved ? "SAVED LOCAL" : "READY TO SAVE"}</span></div><h3>{packet.task}</h3><div className="packet-details"><div><small>ACCEPTANCE CRITERIA</small><p>{packet.criteria || "No criteria entered"}</p></div><div><small>ALLOWED SCOPE</small><code>{packet.paths}</code></div><div><small>PROVIDER</small><p>{packet.provider} · {packet.network ? "network enabled" : "network disabled"}</p></div></div><div className="engine-notice"><TerminalSquare size={17} /><div><strong>{proposalWorkspaces.some((workspace) => workspace.id === packet.id) ? "ISOLATED BASELINE READY · NO CODE GENERATED" : "REQUEST RECORD · NO CODE GENERATED"}</strong><p>{proposalWorkspaces.some((workspace) => workspace.id === packet.id) ? "A detached worktree was created at the captured commit. Darkflow has not invoked an agent, run project checks, or changed the original tree." : "Review and save this request before preparing its isolated baseline. No agent, project checks, diff generation, or patch apply are connected yet."}</p></div></div><div className="packet-actions"><button className="secondary-button" onClick={() => setPage("overview")}>EDIT REQUEST</button><button className="secondary-button" onClick={() => void createWorkspace()} disabled={!packet.saved || !desktop || workspaceBusy || proposalWorkspaces.some((workspace) => workspace.id === packet.id)}>{workspaceBusy ? "PREPARING BASELINE…" : proposalWorkspaces.some((workspace) => workspace.id === packet.id) ? "BASELINE PREPARED" : "CREATE ISOLATED BASELINE"}</button><button className="primary-button" onClick={() => void savePacket()} disabled={packet.saved}>{packet.saved ? <Check size={14} /> : <LockKeyhole size={14} />}{packet.saved ? "SAVED TO LOCAL HISTORY" : "SAVE REVIEWED REQUEST"}</button></div>{!desktop && <p className="preview-hint">Use the installed desktop app to create a real Git worktree. Browser preview cannot access your filesystem.</p>}</div> : <div className="empty-state"><Workflow size={25} /><strong>Nothing in the queue yet</strong><p>Create a request packet from the command deck to begin.</p><button className="secondary-button" onClick={() => setPage("overview")}>OPEN COMMAND DECK</button></div>}</section>
+          <section className="panel worktree-history"><div className="panel-head"><div className="panel-title"><span className="panel-icon green"><GitBranch size={16} /></span><div><h2>ISOLATED PROPOSAL WORKTREES</h2><small>LOCAL APP DATA · DETACHED COMMITS</small></div></div><span className="status-pending">{proposalWorkspaces.length} ACTIVE</span></div>{proposalWorkspaces.length ? <div className="workspace-list">{proposalWorkspaces.map((workspace) => <article className="workspace-row" key={workspace.id}><div className="workspace-copy"><strong>DF-{workspace.id.slice(0, 8).toUpperCase()} · {workspace.baseBranch || "DETACHED SOURCE"}</strong><code>BASE {workspace.baseCommit.slice(0, 12)} · {workspace.originalChangedFiles} ORIGINAL PATH ENTRIES</code><code className="workspace-path">{workspace.worktreePath}</code>{workspace.originalChangedFiles > 0 && <p className="workspace-warning">The source tree had uncommitted changes. This worktree starts from committed HEAD and does not include them.</p>}</div><button className="secondary-button workspace-discard" onClick={() => void discardWorkspace(workspace)}><X size={13} /> DISCARD</button></article>)}</div> : <div className="empty-worktrees"><FolderOpen size={18} /><span>No isolated worktrees are active. They remain listed here across app restarts so you can inspect or discard them.</span></div>}</section>
+        </>}
 
         {page === "telemetry" && <section className="panel telemetry-detail"><div className="panel-head"><div className="panel-title"><span className="panel-icon cyan"><Activity size={16} /></span><div><h2>LOCAL TELEMETRY MONITOR</h2><small>NO REMOTE EXPORT CONFIGURED</small></div></div><span className="live-chip"><Radio size={13} /> SESSION LIVE</span></div><div className="telemetry-cards"><div><small>SESSION EVENTS</small><strong>{String(eventRows.length).padStart(2, "0")}</strong><span>Recorded in this session</span></div><div><small>CHECK SUCCESS RATE</small><strong>—</strong><span>No checks run yet</span></div><div><small>AVG. CHECK DURATION</small><strong>—</strong><span>Awaiting first run</span></div><div><small>CHANGED FILES</small><strong>{current.root ? String(current.changedFiles).padStart(2, "0") : "—"}</strong><span>{current.root ? "Current project snapshot" : "Select a project first"}</span></div></div><div className="telemetry-chart"><div className="chart-copy"><strong>WORKFLOW ACTIVITY</strong><span>LOCAL EVENTS PER TIME SLICE · LAST 15 MIN</span></div><div className="chart-bars">{chartHeights.map((height, index) => <i key={index} style={{ height: `${height}%`, opacity: .25 + height / 140 }} />)}</div><div className="chart-times"><span>15 MIN AGO</span><span>NOW</span></div></div><div className="privacy-callout"><LockKeyhole size={16} /><div><strong>LOCAL-FIRST TELEMETRY</strong><p>Counts and durations describe Darkflow operations. Source, task prompts, diffs, and raw command output are not collected as telemetry.</p></div></div></section>}
 

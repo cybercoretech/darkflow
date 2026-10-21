@@ -1,6 +1,6 @@
 # 📡 Local telemetry and monitoring
 
-Darkflow's prototype telemetry is local-only and records a small set of UI/session events, not source code. Proposal lifecycle, check outcomes, durations, provider health, and changed-line metrics below are planned metrics; they are not yet collected because the execution engine is not connected.
+Darkflow's prototype telemetry is local-only and records a small set of UI/session events, including proposal worktree preparation and discard, not source code. Proposal lifecycle totals, check outcomes, durations, provider health, and changed-line metrics below are planned metrics; they are not yet collected because the execution engine is not connected.
 
 ## Dashboard metrics
 

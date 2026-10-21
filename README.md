@@ -15,9 +15,9 @@ Darkflow is intended to make AI-assisted project work auditable and reusable. It
 
 ## 🚦 Current prototype
 
-The first control-panel slice provides a project dashboard, task and acceptance-criteria inputs, allowed-path entry, provider and network controls, project inspection, a reviewed request packet, local request saving, and session-local telemetry. The Rust backend can inspect a selected project, parse `darkflow.conf`, read Git branch/status, and save request packets into Darkflow's private app-data directory.
+The first control-panel slice provides a project dashboard, task and acceptance-criteria inputs, allowed-path entry, provider and network controls, project inspection, a reviewed request packet, local request saving, and session-local telemetry. The Rust backend can inspect a selected project, parse `darkflow.conf`, read Git branch/status, save request packets, and create/list/discard detached proposal worktrees under Darkflow's private app-data directory. Worktree creation captures committed `HEAD` and blocks dirty source trees by default.
 
-The execution engine is not connected yet. Darkflow does not create isolated worktrees, invoke an agent, execute project checks, calculate or display diffs, or apply patches. The screen describes that intended lifecycle, but this prototype cannot generate or apply source changes. See [`WORKLIST.md`](WORKLIST.md) and [the roadmap](docs/ROADMAP.md) for the remaining implementation gates.
+The execution engine is only partly connected. Darkflow does not invoke an agent, execute project checks, calculate or display diffs, enforce changed-path scope, detect stale proposals, or apply patches. Worktree creation currently prepares a clean, detached baseline only; it cannot generate or apply source changes. See [`WORKLIST.md`](WORKLIST.md) and [the roadmap](docs/ROADMAP.md) for the remaining implementation gates.
 
 ## 🛠️ Development
 
@@ -38,8 +38,9 @@ cargo test --manifest-path src-tauri/Cargo.toml
 
 ## 🔐 Safety contract
 
-- The current prototype does not edit project files or run configured commands.
-- Before execution is implemented, isolate proposals in disposable Git worktrees and keep network access disabled by default.
+- Worktree creation does not change project source. Proposal worktrees are detached and isolated under Darkflow app data.
+- The current prototype does not invoke agents, run configured commands, or apply changes.
+- Network access is not controlled by an execution sandbox yet; keep any future execution disabled until that boundary is implemented.
 - Keep project operations in narrow Rust commands; never grant the WebView broad shell access.
 - The future apply operation must require a reviewed, current diff and must never commit, push, or deploy.
 - Protect `.github/workflows/**`, lockfiles, and configured paths unless the user explicitly includes them in the reviewed change.

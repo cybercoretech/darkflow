@@ -22,6 +22,8 @@ Project + darkflow.conf + DARKFLOW.md
 
 The change-provider interface should support Codex CLI first and allow other local providers later. It must never run directly against the original worktree. The app should capture the baseline commit and working-tree state, then refuse application if the destination changed before review.
 
+The prototype currently reaches through the request-record stage and the first worktree boundary: it captures commit/status, creates a detached worktree at the captured commit, persists its manifest under app data, and allows explicit cleanup. It does not yet invoke a provider, run checks, produce a patch, or apply one.
+
 ## Why Tauri + React
 
 Tauri provides OS-level desktop integration with a Rust backend while rendering the UI in the platform WebView. UI design flexibility is high: standard HTML, CSS, SVG, WebGL/canvas, React, and web accessibility tooling are available. Tailwind handles the project design tokens and responsive layout; Motion for React handles restrained transitions; Radix primitives supply accessible dialogs, selects, checkboxes, and tabs. These are the unstyled primitives behind the shadcn/ui approach, so components can use a custom Darkflow identity rather than a generic theme.
