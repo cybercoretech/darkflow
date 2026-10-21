@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#070a0f" />
+  <title>DARKFLOW // Identity Directions</title>
+  <style>
+    :root{color-scheme:dark;--bg:#070a0f;--panel:#0b1017;--line:#202a35;--text:#e1e9ed;--muted:#778692;--cyan:#20d9e6;--green:#4df0a5;--pink:#fa4bac;--mono:"JetBrains Mono",Consolas,monospace}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% -20%,#12374438,transparent 50%),repeating-linear-gradient(0deg,#ffffff04 0 1px,transparent 1px 4px),var(--bg);color:var(--text);font:14px Inter,"Segoe UI",sans-serif;min-height:100vh}.wrap{max-width:1500px;margin:auto;padding:38px 42px 52px}.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px}.brand{display:flex;align-items:center;gap:11px}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid #168c9a;color:var(--cyan);font:700 10px var(--mono);clip-path:polygon(18% 0,82% 0,100% 20%,100% 80%,82% 100%,18% 100%,0 80%,0 20%)}.brand b{font:700 12px var(--mono);letter-spacing:2px}.brand small{display:block;margin-top:4px;color:#63717e;font:8px var(--mono);letter-spacing:1.4px}.status{display:flex;align-items:center;gap:8px;color:#6c8790;font:8px var(--mono);letter-spacing:1px}.status i{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}.eyebrow{margin-top:38px;color:#55d5dc;font:9px var(--mono);letter-spacing:2px}.eyebrow:before{content:"◆";margin-right:9px;color:var(--pink);font-size:8px}h1{margin:14px 0 7px;font-size:36px;letter-spacing:.5px}h1 em{color:var(--cyan);font-style:normal}header p{max-width:720px;color:#84929d;line-height:1.6;margin:0}.selection{min-height:20px;margin:15px 0 22px;color:#789099;font:8px var(--mono);letter-spacing:.7px}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.option{--accent:#23d8e5;position:relative;overflow:hidden;border:1px solid #26313a;background:linear-gradient(145deg,#0c1118,#090d13);transition:transform .2s,border-color .2s,box-shadow .2s;cursor:pointer}.option:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent),#26313a 35%);box-shadow:0 10px 35px #0008}.option.selected{border-color:var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent),transparent 55%),0 0 28px color-mix(in srgb,var(--accent),transparent 87%)}.option:after{content:"";position:absolute;top:0;right:15px;width:34px;height:2px;background:var(--accent);box-shadow:0 0 10px var(--accent)}.art{height:220px;background-image:url("assets/darkflow-direction-contact-sheet.png");background-size:500% 200%;background-repeat:no-repeat;border-bottom:1px solid #242e38;position:relative}.art:after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#080b10)}.num{position:absolute;z-index:1;left:12px;top:11px;color:#9eabb2;font:8px var(--mono);letter-spacing:1px}.tile-tag{position:absolute;z-index:1;right:10px;top:10px;padding:4px 5px;border:1px solid #34424b;background:#080d12dd;color:#9aaaae;font:7px var(--mono);letter-spacing:.7px}.content{padding:12px 13px 14px}.name{margin:0;color:#e0e7eb;font:600 11px var(--mono);letter-spacing:.5px}.desc{height:34px;margin:7px 0 12px;color:#82909a;font-size:9px;line-height:1.5}.chips{display:flex;gap:5px}.chips i{width:20px;height:3px;background:var(--accent);opacity:.75}.chips i:nth-child(2){background:#31c3c9}.chips i:nth-child(3){background:#d83e9b}.selection-state{margin-left:auto;color:var(--accent);font:7px var(--mono);letter-spacing:.5px}.foot{display:flex;justify-content:space-between;gap:15px;margin-top:26px;padding-top:13px;border-top:1px solid var(--line);color:#66747e;font:8px var(--mono);letter-spacing:.5px}.foot strong{color:#90a2aa;font-weight:400}.note{margin-top:16px;color:#64737e;font-size:10px;line-height:1.6}.note b{color:#9aadb5;font-weight:500}
+    @media(max-width:1200px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}.art{height:210px}}@media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wrap{padding:26px 24px}}@media(max-width:620px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.status{display:none}.wrap{padding:20px 14px}h1{font-size:27px}.art{height:190px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top"><div class="brand"><div class="mark">DF</div><div><b>DARKFLOW</b><small>CYBERCORE CHANGE CONTROL</small></div></div><div class="status"><i></i> VISUAL SYSTEMS / CONCEPT REVIEW</div></div>
+    <header><div class="eyebrow">BRAND LAB / ROUND 01</div><h1>Ten directions.<br><em>One signal.</em></h1><p>Dark titanium geometry, signal paths, and controlled neon. Each tile combines a distinct emblem with its own technical background treatment. Select a direction to mark it for refinement; none is locked as the final logo.</p></header>
+    <div class="selection" id="selection" aria-live="polite">SELECT A DIRECTION TO FLAG FOR REFINEMENT</div>
+    <section class="grid" aria-label="Logo and image directions" id="grid"></section>
+    <div class="foot"><span><strong>DESIGN LANGUAGE</strong> / MACHINED GRAPHITE · SIGNAL CYAN · CONTROLLED NEON</span><span>CYBERCORE SYSTEMS <strong>·</strong> DARKFLOW / 0.1.0</span></div>
+    <p class="note"><b>Review note:</b> These are visual starting points, not finished identity exports. After you pick a direction, redraw the mark as clean SVG geometry, then derive app icons, favicon, wordmark lockups, and background artwork from the approved source.</p>
+  </main>
+  <script>
+    const options=[
+      ["CONDUIT PULSE","Connected angular channels carry a bright data signal.","#28d9ed"],
+      ["CORE APERTURE","Nested titanium geometry around a quiet cyan core.","#25dce9"],
+      ["TRANSFER GATE","Command brackets exchange a signal through the center.","#ef55c8"],
+      ["VECTOR RELAY","Machined split chevrons route a green current.","#58eaa4"],
+      ["ORBITAL CHECKSUM","Interrupted rings frame a precise signal crossing.","#28d7e6"],
+      ["LAYERED SIGNAL","Stacked system planes connect through one pulse.","#3fd9df"],
+      ["DF MONOGRAM","A compact geometric ligature cut from graphite.","#39dce5"],
+      ["JUNCTION ZERO","Four paths converge on a restrained amber core.","#f4b548"],
+      ["SEAMLINE","Offset metal plates meet along a cyan signal seam.","#32d9ee"],
+      ["DIRECTED GRAPH","A small topology map becomes a forward-moving mark.","#4de8b1"],
+    ];
+    const grid=document.querySelector('#grid');
+    options.forEach(([name,desc,accent],index)=>{
+      const card=document.createElement('button');card.type='button';card.className='option';card.style.setProperty('--accent',accent);card.setAttribute('aria-label',`Select direction ${index+1}: ${name}`);
+      const x=(index%5)*25,y=index<5?0:100;
+      card.innerHTML=`<div class="art" style="background-position:${x}% ${y}%"><span class="num">DIRECTION / ${String(index+1).padStart(2,'0')}</span><span class="tile-tag">${index<5?'CYAN':'SIGNAL'}</span></div><div class="content"><h2 class="name">${name}</h2><p class="desc">${desc}</p><div class="chips"><i></i><i></i><i></i><span class="selection-state"></span></div></div>`;
+      card.addEventListener('click',()=>{document.querySelectorAll('.option').forEach(el=>{el.classList.remove('selected');el.querySelector('.selection-state').textContent=''});card.classList.add('selected');card.querySelector('.selection-state').textContent='FLAGGED';document.querySelector('#selection').textContent=`DIRECTION ${String(index+1).padStart(2,'0')} / ${name} — FLAGGED FOR REFINEMENT`});grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

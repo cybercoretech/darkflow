@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-capability",
+  "description": "Frontend can use only the project folder picker and core window APIs.",
+  "windows": ["main"],
+  "permissions": ["core:default", "dialog:allow-open"]
+}
