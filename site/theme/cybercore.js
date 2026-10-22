@@ -16,17 +16,6 @@
     cyberdyne: 'CYBERDYNE', cyberpunk: 'CYBERPUNK', default: 'DEFAULT / CLASSICS', dystopian: 'DYSTOPIAN',
     neosynth: 'NEOSYNTH', 'omarchy-live': 'OMARCHY LIVE', synthwave: 'SYNTHWAVE', DWCode: 'DWCODE',
   };
-  // Canonical contact data lives on the org site (cybercoretech.github.io/data/contact.json).
-  // This copy is only used when that file can't be read (local preview, offline).
-  const CONTACT_FALLBACK = {
-    email: { contact: { address: 'dev@cybercoretech.net' }, security: { address: 'security@cybercoretech.net' } },
-    channels: [
-      { label: 'GitHub', url: 'https://github.com/cybercoretech' },
-      { label: 'Discord', url: 'https://discord.gg/vBMcK5wAx' },
-    ],
-    home: { title: 'cybercoretech.net', url: 'https://cybercoretech.net/' },
-  };
-
   const root = document.documentElement;
   const $ = (sel, el = document) => el.querySelector(sel);
   const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
@@ -165,43 +154,28 @@
     }));
   }
 
-  // ── footer ────────────────────────────────────────────────────────────────
-  async function contactData() {
-    if (/\.github\.io$/.test(location.hostname)) {
-      try {
-        const r = await fetch('/data/contact.json', { cache: 'no-cache' });
-        if (r.ok) return await r.json();
-      } catch { /* fall back */ }
-    }
-    return CONTACT_FALLBACK;
-  }
-
-  async function renderFooters() {
+  // ── footer: the universal Cybercore contact block ───────────────────────
+  // Every Cybercore site loads <cybercore-contact> from the org site's kit;
+  // it reads /data/contact.json there, so contact details change in one place.
+  // The mailto inside the tag is the offline fallback.
+  const KIT = 'https://cybercoretech.github.io/kit/contact.js';
+  function renderFooters() {
     const holders = $$('[data-site-footer]');
     if (!holders.length) return;
-    const c = await contactData();
-    const mail = a => el('a', { href: `mailto:${a}`, text: a });
     const ext = (href, text) => el('a', { href, text, target: '_blank', rel: 'noopener noreferrer' });
     for (const f of holders) {
       f.textContent = '';
-      const identity = el('div', { class: 'footer-identity' },
-        el('a', { class: 'footer-logo', href: landing }, el('span', { class: 'footer-logo-mark', text: '<DF>' }), el('span', { text: 'DARKFLOW' })),
-        el('p', { text: 'Local-first change control. Part of the Cybercore family of tools.' }));
-      const contact = el('div', { class: 'footer-column' }, el('span', { class: 'footer-label', text: 'CONTACT' }));
-      if (c.email?.contact?.address) contact.append(mail(c.email.contact.address));
-      if (c.email?.security?.address) contact.append(el('small', { text: 'SECURITY REPORTS' }), mail(c.email.security.address));
-      const network = el('div', { class: 'footer-column' }, el('span', { class: 'footer-label', text: 'NETWORK' }));
-      if (c.home?.url) network.append(ext(c.home.url, c.home.title || 'cybercoretech.net'));
-      for (const ch of (c.channels || []).filter(x => ['GitHub', 'Discord'].includes(x.label))) network.append(ext(ch.url, ch.label));
-      network.append(ext(`https://github.com/${REPO}`, 'Darkflow source'));
+      const contact = el('cybercore-contact', { repo: 'darkflow' }, el('a', { href: 'mailto:dev@cybercoretech.net', text: 'dev@cybercoretech.net' }));
+      const band = el('section', { class: 'contact-band', 'aria-label': 'Contact Cybercore Tech' }, el('div', { class: 'contact-wrap' }, contact));
       const bottom = el('div', { class: 'footer-bottom' },
-        el('span', { text: 'Copyright (c) 2026 Cybercore Tech · MIT' }),
+        el('span', { text: `CYBERCORE TECH / DARKFLOW / © ${new Date().getFullYear()}` }),
         el('nav', { 'aria-label': 'Footer' },
           el('a', { href: manual, text: 'FIELD MANUAL' }),
           ext(`https://github.com/${REPO}/blob/main/docs/SECURITY.md`, 'SECURITY'),
-          ext(`https://github.com/${REPO}/issues`, 'ISSUES')));
-      f.append(el('div', { class: 'footer-divider', 'aria-hidden': 'true' }), el('div', { class: 'footer-grid' }, identity, contact, network), bottom);
+          ext(`https://github.com/${REPO}`, 'SOURCE')));
+      f.append(el('div', { class: 'footer-divider', 'aria-hidden': 'true' }), band, bottom);
     }
+    if (!document.querySelector(`script[src="${KIT}"]`)) document.head.append(el('script', { type: 'module', src: KIT }));
   }
 
   // ── signal cards (landing page) ───────────────────────────────────────────

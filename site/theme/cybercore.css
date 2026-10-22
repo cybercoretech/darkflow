@@ -23,3 +23,7 @@ body.mdbook-page{font-size:14px}.mdbook-page .site-header{position:sticky;margin
 .mdbook-page .site-header{padding-inline:clamp(16px,3vw,32px);max-width:100%}
 /* mdBook pulls .page up by the menu-bar height to hide its hover strip; cancel that for the header. */
 .mdbook-page .page>.site-header{margin:var(--menu-bar-height,50px) calc(0px - var(--page-padding,15px)) 0}
+/* Universal Cybercore contact block: map this site's palette onto the kit's roles. */
+.contact-band{--fg:var(--text);--white:var(--text);--cyan:var(--accent);--pink:var(--secondary);--purple:var(--secondary);--acid:var(--success);--orange:var(--warning);padding:30px 0}
+.contact-wrap{width:min(1200px,calc(100% - 56px));margin:auto}
+@media(max-width:620px){.contact-wrap{width:calc(100% - 34px)}.contact-band{padding:20px 0}}
