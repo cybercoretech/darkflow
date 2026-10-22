@@ -4,6 +4,13 @@
 
 Darkflow is intended to make AI-assisted project work auditable and reusable. It does not treat a model's answer as a patch to trust blindly: the proposal, touched paths, exact checks, outputs, and final diff remain visible before changes reach the original working tree.
 
+## 🌐 Website and Field Manual
+
+- **Landing page:** https://cybercoretech.github.io/darkflow/
+- **Field Manual (these docs as a themed book):** https://cybercoretech.github.io/darkflow/docs/
+
+Build both locally with `bash tools/build-site.sh` (needs [mdBook](https://rust-lang.github.io/mdBook/) 0.5), then serve `site/`. The `Darkflow site` workflow builds, link-checks and deploys them on every push to `main`.
+
 ## 🧰 Project files
 
 | File | Purpose |

@@ -1,0 +1,19 @@
+[book]
+title = "Darkflow // Field Manual"
+authors = ["Cybercore Systems"]
+description = "Architecture, policy, safety, and operator guidance for Darkflow."
+language = "en"
+src = "build/book-src"
+
+[build]
+build-dir = "site/docs"
+
+[output.html]
+# Served at https://cybercoretech.github.io/darkflow/docs/ (the 404 page needs absolute paths).
+site-url = "/darkflow/docs/"
+theme = "book/theme"
+default-theme = "navy"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/cybercoretech/darkflow"
+additional-css = ["site/theme/cybercore.css"]
+additional-js = ["site/theme/theme-catalog.js", "site/theme/cybercore.js"]

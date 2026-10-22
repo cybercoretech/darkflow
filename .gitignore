@@ -5,3 +5,7 @@ src-tauri/target/
 src-tauri/gen/
 .darkflow/
 .env
+
+# Website build output
+build/
+site/docs/
