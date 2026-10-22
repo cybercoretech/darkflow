@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="cyberdyne-hunter">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a0f">
+  <meta name="description" content="Darkflow is a local-first, inspectable change-control workbench for software projects.">
+  <title>Darkflow — Change with evidence</title>
+  <link rel="icon" href="./assets/darkflow.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/monaspace-krypton-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./theme/cybercore.css">
+</head>
+<body class="landing-page">
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand-lockup" href="#top" aria-label="Darkflow home"><span class="brand-mark">&lt;DF&gt;</span><span class="brand-name">DARKFLOW</span><span class="brand-divider"></span><span class="brand-caption">CHANGE CONTROL</span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#system">SYSTEM</a><a href="#signals">SIGNALS</a><a href="./docs/">FIELD MANUAL ↗</a><a href="https://github.com/cybercoretech/darkflow" target="_blank" rel="noopener noreferrer">SOURCE ↗</a></nav>
+    <button class="theme-trigger" data-theme-open aria-haspopup="dialog"><span class="theme-dot"></span><span>CYBERCORE THEME</span><b id="theme-current">HUNTER</b><span aria-hidden="true">⌄</span></button>
+    <button class="mobile-menu" aria-label="Open navigation" aria-expanded="false">☰</button>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><i></i> CYBERCORE SYSTEMS <span>/</span> LOCAL CHANGE CONTROL</p>
+        <p class="hero-index">DF <b>//</b> 001 <span>INSPECTABLE BY DESIGN</span></p>
+        <h1>Change with<br><em>evidence.</em></h1>
+        <p class="hero-lede">A local-first workbench for preparing software changes in isolated worktrees, keeping the request, boundaries, and review trail visible.</p>
+        <div class="hero-actions"><a class="button button-primary" href="./docs/">OPEN FIELD MANUAL <span>↗</span></a><a class="button button-quiet" href="https://github.com/cybercoretech/darkflow" target="_blank" rel="noopener noreferrer">INSPECT SOURCE <span>↗</span></a></div>
+        <div class="hero-footnote"><span class="status-pip"></span> LOCAL-FIRST <b>·</b> HUMAN REVIEW <b>·</b> NO AUTO-APPLY</div>
+      </div>
+      <aside class="hero-console" aria-label="Darkflow project signals">
+        <div class="console-head"><span class="console-lights"><i></i><i></i><i></i></span><span>darkflow / control-surface</span><b>PREVIEW</b></div>
+        <div class="flow-card">
+          <div class="flow-orbit orbit-a"></div><div class="flow-orbit orbit-b"></div>
+          <svg class="flow-lines" viewBox="0 0 560 270" preserveAspectRatio="none" aria-hidden="true"><path class="flow-path path-a" d="M-20 166 C90 34 142 232 258 120 S432 28 580 118"/><path class="flow-path path-b" d="M-20 205 C105 118 150 266 278 173 S455 76 580 171"/><path class="flow-path path-c" d="M-20 112 C90 218 168 43 292 102 S450 236 580 87"/><circle class="flow-node node-a" cx="258" cy="120" r="4"/><circle class="flow-node node-b" cx="278" cy="173" r="3"/></svg>
+          <div class="hero-wordmark"><span class="wordmark-bracket">&lt;</span><span class="wordmark-df">DF</span><span class="wordmark-bracket">&gt;</span><span class="wordmark-name">DARKFLOW</span></div>
+          <div class="flow-signal signal-one"><span>01</span><b>REQUEST</b><i></i></div><div class="flow-signal signal-two"><span>02</span><b>ISOLATE</b><i></i></div><div class="flow-signal signal-three"><span>03</span><b>REVIEW</b><i></i></div>
+          <div class="console-readout"><span>CHANGE STREAM</span><b>AWAITING HUMAN REVIEW</b></div>
+        </div>
+        <div class="console-status"><span><i></i> SOURCE TREE PROTECTED</span><span>DF / 0.1.0</span></div>
+      </aside>
+    </section>
+
+    <section class="signals-section shell" id="signals">
+      <div class="section-heading"><div><p class="eyebrow">01 / PROJECT SIGNALS</p><h2>Know what is<br><em>actually online.</em></h2></div><p>Live repository metadata comes from GitHub. Product telemetry stays on the device; this landing page does not track visitors.</p></div>
+      <div class="stats-grid" id="signals-grid">
+        <button class="signal-card" data-modal="project-modal"><span class="card-top"><i class="signal-icon icon-core">DF</i><small>PROJECT / RELEASE</small><b>↗</b></span><strong>0.1.0</strong><span class="signal-label">CONTROL PANEL PROTOTYPE</span><span class="card-bottom">TAURI 2 · RUST · REACT</span></button>
+        <button class="signal-card" data-modal="repo-modal"><span class="card-top"><i class="signal-icon icon-repo">GH</i><small>REPOSITORY / LIVE</small><b>↗</b></span><strong id="repo-stars">—</strong><span class="signal-label">STARS · FORKS · OPEN ISSUES</span><span class="card-bottom" id="repo-updated">FETCHING PUBLIC METADATA…</span></button>
+        <button class="signal-card" data-modal="ci-modal"><span class="card-top"><i class="signal-icon icon-ci">CI</i><small>BUILD / CHECKS</small><b>↗</b></span><strong id="ci-status">CHECKING</strong><span class="signal-label">LATEST GITHUB ACTIONS RUN</span><span class="card-bottom">FRONTEND · RUST · FORMATTING</span></button>
+        <button class="signal-card" data-modal="privacy-modal"><span class="card-top"><i class="signal-icon icon-privacy">◎</i><small>TELEMETRY / LOCAL</small><b>↗</b></span><strong>ON DEVICE</strong><span class="signal-label">NO WEBSITE VISITOR TRACKING</span><span class="card-bottom">SOURCE AND PROMPTS STAY LOCAL</span></button>
+      </div>
+    </section>
+
+    <section class="system-section shell" id="system">
+      <div class="section-heading"><div><p class="eyebrow">02 / SYSTEM MODEL</p><h2>Every step leaves<br><em>a readable trace.</em></h2></div><p>Darkflow is being built around an inspectable proposal path. The current prototype prepares request records and detached baselines; its editing and apply engine is still under development.</p></div>
+      <div class="workflow-rail"><article><span>01 / DEFINE</span><h3>Write the brief</h3><p>Capture intent, constraints, accepted paths, and criteria in a reusable request.</p><b>REQUEST PACKET</b></article><i aria-hidden="true">→</i><article><span>02 / PREPARE</span><h3>Isolate the baseline</h3><p>Create a detached worktree at a captured commit without touching the original tree.</p><b>IMPLEMENTED</b></article><i aria-hidden="true">→</i><article class="future-step"><span>03 / VERIFY</span><h3>Run the evidence</h3><p>Configured checks and generated changes are planned; execution is not connected yet.</p><b>IN DEVELOPMENT</b></article><i aria-hidden="true">→</i><article class="future-step"><span>04 / REVIEW</span><h3>Choose what applies</h3><p>A complete diff and explicit reversible apply step are planned safety gates.</p><b>PLANNED</b></article></div>
+      <div class="truth-banner"><span class="truth-mark">i</span><p><strong>Prototype status:</strong> Darkflow does not invoke an agent, execute configured checks, create a code diff, or apply patches yet. The docs distinguish implemented behavior from planned safeguards.</p><a href="./docs/">READ THE FIELD MANUAL ↗</a></div>
+    </section>
+    <section class="docs-cta shell"><div><p class="eyebrow">03 / OPERATOR DOCUMENTATION</p><h2>Read the <em>field manual.</em></h2><p>Architecture, configuration, security boundaries, telemetry, roadmap, and contributor workflow in one themed book.</p></div><a class="button button-primary" href="./docs/">BROWSE DOCS <span>↗</span></a></section>
+  </main>
+
+  <footer class="site-footer" data-site-footer></footer>
+  <dialog class="theme-dialog" id="theme-dialog" aria-labelledby="theme-title"><div class="dialog-top"><span>CYBERCORE / PALETTE SELECTOR</span><button type="button" data-dialog-close aria-label="Close">×</button></div><div class="dialog-body"><p class="eyebrow">COLOR SYSTEM</p><h2 id="theme-title">Tune the signal.</h2><p>Choose from the canonical Cybercore palette collection. Your selection is saved only in this browser.</p><label class="theme-search-label" for="theme-search">FILTER THEMES</label><input id="theme-search" type="search" placeholder="Search palettes…"><div class="theme-options" id="theme-options"></div><small class="theme-note" id="theme-note">84 palettes · 8 families · saved in this browser only</small></div></dialog>
+  <dialog class="info-dialog" id="info-dialog" aria-labelledby="info-title"><div class="dialog-top"><span id="info-kicker">DARKFLOW / SIGNAL DETAIL</span><button type="button" data-dialog-close aria-label="Close">×</button></div><div class="dialog-body"><p class="eyebrow" id="info-eyebrow">PROJECT SIGNAL</p><h2 id="info-title">Project status</h2><div class="info-content" id="info-content"></div></div></dialog>
+  <script src="./theme/theme-catalog.js"></script><script src="./theme/cybercore.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+name: Darkflow site
+
+# Landing page + Field Manual (mdBook) → https://cybercoretech.github.io/darkflow/
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'book/**'
+      - 'book.toml'
+      - 'docs/**'
+      - '*.md'
+      - 'tools/build-site.sh'
+      - '.github/workflows/pages.yml'
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'book/**'
+      - 'book.toml'
+      - 'docs/**'
+      - '*.md'
+      - 'tools/build-site.sh'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  MDBOOK_VERSION: v0.5.4
+  MDBOOK_SHA256: 3f28de05dafca9d0f2eab99c662116b0e37b89b1d96a08f8f430b9eeae958cd7
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install mdBook (pinned, checksum-verified)
+        run: |
+          set -euo pipefail
+          url="https://github.com/rust-lang/mdBook/releases/download/${MDBOOK_VERSION}/mdbook-${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          curl -fsSL -o mdbook.tar.gz "$url"
+          echo "${MDBOOK_SHA256}  mdbook.tar.gz" | sha256sum -c -
+          mkdir -p "$HOME/.local/bin" && tar -xzf mdbook.tar.gz -C "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Build landing page and Field Manual
+        run: bash tools/build-site.sh
+      - name: Check internal links
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib, re, sys, urllib.parse
+          root = pathlib.Path("site")
+          bad = []
+          for page in root.rglob("*.html"):
+              for ref in re.findall(r'(?:href|src)="([^"#?]+)', page.read_text(errors="ignore")):
+                  if re.match(r"^[a-z]+:", ref) or ref.startswith("//"):
+                      continue
+                  if ref.startswith("/darkflow/"):
+                      target = (root / urllib.parse.unquote(ref[len("/darkflow/"):])).resolve()
+                  else:
+                      target = (page.parent / urllib.parse.unquote(ref)).resolve()
+                  if target.is_dir():
+                      target = target / "index.html"
+                  if not target.exists():
+                      bad.append(f"{page.relative_to(root)} -> {ref}")
+          print("\n".join(bad) or "all internal links resolve")
+          sys.exit(1 if bad else 0)
+          PY
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
