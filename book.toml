@@ -16,4 +16,4 @@ default-theme = "navy"
 preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/cybercoretech/darkflow"
 additional-css = ["site/theme/cybercore.css"]
-additional-js = ["site/theme/theme-catalog.js", "site/theme/cybercore.js"]
+additional-js = ["site/theme/cybercore.js"]
